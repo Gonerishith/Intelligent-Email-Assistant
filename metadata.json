@@ -1,0 +1,6 @@
+{
+  "name": "Intelligent Email Assistant",
+  "description": "An intelligent email assistant featuring Google OAuth 2.0, live Gmail API integration, Gemini 3.7 Flash AI email summarization and tone-aware reply generation, and persistent Supabase database storage for user profiles, connected accounts, AI activity logs, and preferences.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
