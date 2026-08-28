@@ -73,15 +73,22 @@ export function getOAuthConfig(req?: Request): { isConfigured: boolean; config: 
     };
   }
 
-  // Determine Redirect URI
+  // Determine Redirect URI with full deployment awareness
   let redirectUri = process.env.GOOGLE_REDIRECT_URI?.trim();
   if (!redirectUri) {
     const appUrl = process.env.APP_URL?.trim();
     if (appUrl) {
       redirectUri = `${appUrl.replace(/\/$/, '')}/auth/callback`;
+    } else if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+      redirectUri = `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}/auth/callback`;
+    } else if (process.env.VERCEL_URL) {
+      redirectUri = `https://${process.env.VERCEL_URL}/auth/callback`;
     } else if (req) {
-      const host = req.get('x-forwarded-host') || req.get('host') || 'localhost:3000';
-      const protocol = req.get('x-forwarded-proto') || req.protocol || 'http';
+      const forwardedHost = req.get('x-forwarded-host');
+      const host = forwardedHost || req.get('host') || 'localhost:3000';
+      const isLocalhost = host.includes('localhost') || host.includes('127.0.0.1');
+      const forwardedProto = req.get('x-forwarded-proto');
+      const protocol = forwardedProto || (isLocalhost ? 'http' : 'https');
       redirectUri = `${protocol}://${host}/auth/callback`;
     } else {
       redirectUri = 'http://localhost:3000/auth/callback';
